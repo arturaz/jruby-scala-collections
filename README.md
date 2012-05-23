@@ -9,6 +9,10 @@ https://rubygems.org/gems/jruby-scala-collections
 
 $ gem install jruby-scala-collections
 
+With bundler:
+
+```gem "jruby-scala-collections", ">=0.1.1", require: "jruby/scala_support"```
+
 ## How do you use it?
 
 Each ```Object``` has two methods: ```#to_scala``` and ```#from_scala```.
