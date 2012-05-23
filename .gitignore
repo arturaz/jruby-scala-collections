@@ -1,0 +1,12 @@
+# Built gem files
+*.gem
+
+# IDEA stuff
+.idea
+*.iml
+
+# SBT stuff
+target/
+boot/
+ext/lib/jruby.jar
+ext/dist/
