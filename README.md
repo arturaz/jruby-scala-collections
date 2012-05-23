@@ -23,6 +23,30 @@ Example:
     scala_arr = scala_object.do_stuff(r_arr.to_scala)
     scala_arr.from_scala
 
+* ```Array#to_scala``` becomes ```scala.collection.mutable.Buffer```
+* ```Hash#to_scala``` becomes ```scala.collection.mutable.Map```
+* ```Set#to_scala``` becomes ```scala.collection.mutable.Set```
+
+Take node that even collections inside collections are wrapped:
+
+    > a = [1,[2,3],{4=>5}].to_scala
+     => #<Java::JrubyCollection::ListWrapper:0x768bdb> 
+    > a.apply(1)
+     => #<Java::JrubyCollection::ListWrapper:0x884ab9> 
+    > a.apply(2)
+     => #<Java::JrubyCollection::MapWrapper:0x1bb605> 
+
+From Scala side Ruby primitives are converted using default JRuby conversions
+that are listed in https://github.com/jruby/jruby/wiki/CallingJavaFromJRuby section
+"Conversion of Types".
+
+So if you expect Array of Fixnums coming to your scala method, it should accept:
+
+    // Either
+    def scalaMethod(args: collection.mutable.Buffer[Long])
+    // Or
+    def scalaMethod(args: collection.Seq[Long])
+
 It also adds ```#Some``` and ```None``` so you could pass values to Scala
 methods:
 
