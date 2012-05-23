@@ -56,5 +56,5 @@ methods:
 ## Disclaimer
 
 This library was written by Artūras 'arturaz' Šlajus for personal
-usage. ```#to_scala``` should work pretty well, however Ruby wrappers
-may be missing methods. Patches are welcome.
+usage. ```#to_scala``` should work pretty well, however Ruby wrappers 
+in ```#from_scala``` may be missing methods. Patches are welcome.
