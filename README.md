@@ -13,6 +13,10 @@ With bundler:
 
 ```gem "jruby-scala-collections", ">=0.1.1", require: "jruby/scala_support"```
 
+Beware that you have to have ```scala-library.jar``` loaded before you 
+load ```jruby/scala_support```. In Rails this generally means it loading in
+```config/boot.rb```.
+
 ## How do you use it?
 
 Each ```Object``` has two methods: ```#to_scala``` and ```#from_scala```.
