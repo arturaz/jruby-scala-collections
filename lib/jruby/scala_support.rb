@@ -46,7 +46,7 @@ module JRuby::ScalaSupport
       @raw
     end
 
-    def blank?
+    def empty?
       @raw.isEmpty
     end
 
@@ -66,6 +66,10 @@ module JRuby::ScalaSupport
         else
           value.get.from_scala
         end
+      end
+
+      def keys
+        @raw.keys.toSeq.from_scala
       end
 
       def has_key?(key)
@@ -264,7 +268,7 @@ module JRuby::ScalaSupport
       @size
     end
 
-    def blank?
+    def empty?
       false
     end
 
@@ -291,11 +295,11 @@ module JRuby::ScalaSupport
 
     def [](index)
       if index < 0
-        @raw.send("_#{size + index + 1}")
+        @raw.send("_#{size + index + 1}").from_scala
       elsif index >= size
         nil
       else
-        @raw.send("_#{index + 1}")
+        @raw.send("_#{index + 1}").from_scala
       end
     end
 
@@ -341,7 +345,14 @@ class Object
     when Java::scala.collection.Seq, Java::scala.collection.immutable.Seq
       JRuby::ScalaSupport::Seq::Immutable.new(self)
     when Java::scala.Product
-      match = self.class.to_s.match(/^Java::Scala::Tuple(\d+)$/)
+      # Sometimes tuples have some wraping classes, like "#<Class:...>" on top
+      # of them. Some magic is needed to find actual tuple name.
+      match = nil
+      self.class.ancestors.find do |klass|
+        match = klass.to_s.match(/^Java::Scala::Tuple(\d+)$/)
+        ! match.nil?
+      end
+
       if match
         size = match[1].to_i
         JRuby::ScalaSupport::Tuple.new(self, size)
