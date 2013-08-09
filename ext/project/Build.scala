@@ -21,7 +21,7 @@ object JrubyScalaCollections extends Build {
         // Copy packaged jar.
         IO.copyFile(
           out / "%s_%s-%s.jar".format(
-            projectName.toLowerCase, scalaVersion, projectVersion
+            projectName.toLowerCase, CrossVersion.binaryScalaVersion(scalaVersion), projectVersion
           ),
           dist / "collections.jar"
         )
@@ -37,12 +37,14 @@ object JrubyScalaCollections extends Build {
         name                := "jruby-scala-collections",
         organization        := "com.tinylabproductions",
         version             := "1.0",
-        scalaVersion        := "2.9.2",
+        scalaVersion        := "2.10.2",
         scalacOptions       := Seq("-deprecation", "-unchecked"),
         autoCompilerPlugins := true,
         resolvers           := Seq(
         ),
         libraryDependencies := Seq(
+          "org.scala-lang" % "scala-library" % "2.10.2",
+          "org.jruby" % "jruby-complete" % "1.7.4"
         ),
         distTask
       )
