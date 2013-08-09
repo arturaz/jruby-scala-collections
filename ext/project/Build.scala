@@ -27,6 +27,12 @@ object JrubyScalaCollections extends Build {
         )
     }
 
+  val writeClasspath = TaskKey[Unit]("write-classpath")
+  val writeClasspathTask = writeClasspath <<= (target, fullClasspath in Runtime) map { (target, cp) =>
+    val f = (target / ".classpath").asFile
+    IO.write(f, cp.map(_.data).mkString(":"))
+  }
+
   lazy val spaceMule = Project(
     "jruby-scala-collections",
     file("."),
@@ -46,7 +52,8 @@ object JrubyScalaCollections extends Build {
           "org.scala-lang" % "scala-library" % "2.10.2",
           "org.jruby" % "jruby-complete" % "1.7.4"
         ),
-        distTask
+        distTask,
+        writeClasspathTask
       )
     /*_*/
   )
