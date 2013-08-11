@@ -72,6 +72,10 @@ module JRuby::ScalaSupport
         @raw.keys.toSeq.from_scala
       end
 
+      def values
+        @raw.values.toSeq.from_scala
+      end
+
       def has_key?(key)
         @raw.contains(key)
       end
@@ -365,6 +369,8 @@ class Object
       JRuby::ScalaSupport::Set::Mutable.new(self)
     when Java::scala.collection.Set, Java::scala.collection.immutable.Set,
       JRuby::ScalaSupport::Set::Immutable.new(self)
+    when Java::scala.Symbol
+      self.name.to_sym
     else
       self
     end
