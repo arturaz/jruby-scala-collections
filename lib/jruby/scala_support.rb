@@ -97,7 +97,7 @@ module JRuby::ScalaSupport
         first = true
         each_with_object("{") do |(key, value), str|
           first ? first = false : str << ", "
-          str << "#{key}=>#{value}"
+          str << "#{key.inspect}=>#{value.inspect}"
         end << "}"
       end
 
