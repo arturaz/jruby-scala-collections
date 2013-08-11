@@ -1,0 +1,2 @@
+fails:Hash#flatten returns an Array
+fails:Hash#flatten returns an empty Array for an empty Hash

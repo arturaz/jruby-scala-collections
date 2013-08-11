@@ -21,9 +21,8 @@ guard 'shell' do
     puts `#{cmd}`
   end
 
-  watch(%r{^lib/(.+)\.rb$}) {|m| exec 'mspec rubyspec' }
-  watch(%r{^rubyspec/(.+)\.rb$}) {|m| exec 'mspec rubyspec' }
-  watch(%r{^ext/target/scala-2.10/classes/.+\.class$}) {|m| exec 'mspec rubyspec' }
-  watch(%r{^.+$}) {|m| exec 'mspec rubyspec' }
+  watch(%r{^lib/(.+)\.rb$}) {|m| exec 'mspec -g focus -G fails rubyspec' }
+  watch(%r{^rubyspec/(.+)\.(rb|txt)$}) {|m| exec 'mspec -g focus -G fails rubyspec' }
+  watch(%r{^ext/target/scala-2.10/classes/.+\.class$}) {|m| exec 'mspec -g focus -G fails rubyspec' }
 
 end

@@ -1,0 +1,5 @@
+fails:Hash#[] returns the default (immediate) value for missing keys
+fails:Hash#[] does not create copies of the immediate default value
+fails:Hash#[] returns the default (dynamic) value for missing keys
+fails:Hash#[] compares keys with eql? semantics
+fails:Hash#[] compares keys with the same #hash value via #eql?

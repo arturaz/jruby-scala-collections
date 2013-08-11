@@ -1,0 +1,5 @@
+fails:Hash#eql? computes equality for recursive hashes
+fails:Hash#eql? compares keys with eql? semantics
+fails:Hash#eql? does not call to_hash on hash subclasses
+fails:Hash#eql? ignores hash class differences
+fails:Hash#eql? compares keys with matching hash codes via eql?
