@@ -69,15 +69,30 @@ module JRuby::ScalaSupport
       end
 
       def keys
-        @raw.keys.toSeq.from_scala
+        @raw.keys.toSeq.from_scala.to_a
       end
 
       def values
-        @raw.values.toSeq.from_scala
+        @raw.values.toSeq.from_scala.to_a
       end
+
+      def value?(v)
+        values.include?(v)
+      end
+
+      alias_method :has_value?, :value?
 
       def has_key?(key)
         @raw.contains(key)
+      end
+
+      alias_method :key?, :has_key?
+      alias_method :member?, :has_key?
+      alias_method :include?, :has_key?
+
+      def key(val)
+        kv = find {|_,v| v == val }
+        kv && kv.first
       end
 
       def each
@@ -97,6 +112,8 @@ module JRuby::ScalaSupport
         end
       end
 
+      alias_method :each_pair, :each
+
       def to_s
         first = true
         each_with_object("{") do |(key, value), str|
@@ -105,11 +122,17 @@ module JRuby::ScalaSupport
         end << "}"
       end
 
+      alias_method :inspect, :to_s
+
       def as_json(options=nil)
         each_with_object({}) do |(key, value), hash|
           hash[key.as_json(options)] = value.as_json(options)
         end
       end
+
+      alias_method :==, :eql?
+
+      alias_method :length, :size
     end
 
     class Immutable
