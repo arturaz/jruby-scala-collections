@@ -171,18 +171,46 @@ module JRuby::ScalaSupport
       include Common
       JRuby::ScalaSupport::Common.fake_identity self, Hash
 
-      def self.[](hsh)
-        h = scala.collection.mutable.HashMap.new.from_scala
-        hsh.each {|k,v| h[k] = v}
-        h
-      end
+      class << self
+        alias_method :previous_new, :new
 
-      def self.new(default_value_or_block=nil)
-        h = scala.collection.mutable.HashMap.new
-        if default_value_or_block
-          h.with_default_value(default_value_or_block)
-        else
-          h
+        def [](*args)
+          hash = new
+          if args.size == 1
+            obj = args.first
+            case obj
+            when Array, Hash then obj.each {|k,v| hash[k] = v}
+            else
+              raise "Don't yet know what to do with a #{obj.inspect}"
+            end
+            return hash
+          end
+
+          return new if args.empty?
+
+          if args.size & 1 == 1
+            raise ArgumentError, "Expected an even number, got #{args.length}"
+          end
+
+          i = 0
+          total = args.size
+
+          while i < total
+            hash[args[i]] = args[i+1]
+            i += 2
+          end
+
+          hash
+        end
+
+        def new(default_value=nil, &default_block)
+          raise ArgumentError, "You can only provide either a default value or a block" if default_value && default_block
+          h = scala.collection.mutable.HashMap.new
+          if default_block
+            h = h.with_default {|k| default_block.call(h,k) }
+          end
+          h = h.with_default_value(default_value) if default_value
+          previous_new(h)
         end
       end
 
