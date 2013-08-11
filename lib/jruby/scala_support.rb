@@ -130,6 +130,28 @@ module JRuby::ScalaSupport
         end
       end
 
+      def eql?(other)
+        return true if self.equal? other
+
+        unless other.kind_of? Hash
+          return false unless other.respond_to? :to_hash
+          return other.eql?(self)
+        end
+
+        return false unless other.size == size
+
+        other.each do |k,v|
+
+          return false unless (entry = @raw.send(:findEntry,k)) && (entry.key.from_scala.eql?(k)) && (item = entry.value)
+
+          # Order of the comparison matters! We must compare our value with
+          # the other Hash's value and not the other way around.
+          return false unless item.eql?(v)
+        end
+
+        true
+      end
+
       alias_method :==, :eql?
 
       alias_method :length, :size
