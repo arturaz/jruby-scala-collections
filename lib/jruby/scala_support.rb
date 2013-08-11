@@ -149,6 +149,21 @@ module JRuby::ScalaSupport
       include Common
       JRuby::ScalaSupport::Common.fake_identity self, Hash
 
+      def self.[](hsh)
+        h = scala.collection.mutable.HashMap.new.from_scala
+        hsh.each {|k,v| h[k] = v}
+        h
+      end
+
+      def self.new(default_value_or_block=nil)
+        h = scala.collection.mutable.HashMap.new
+        if default_value_or_block
+          h.with_default_value(default_value_or_block)
+        else
+          h
+        end
+      end
+
       def []=(key, value)
         @raw.update(key, value.to_scala)
       end
