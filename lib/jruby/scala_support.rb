@@ -142,7 +142,7 @@ module JRuby::ScalaSupport
 
         other.each do |k,v|
 
-          return false unless (entry = @raw.send(:findEntry,k)) && (entry.key.from_scala.eql?(k)) && (item = entry.value)
+          return false unless (entry = real_map.send(:findEntry,k)) && (entry.key.from_scala.eql?(k)) && (item = entry.value)
 
           # Order of the comparison matters! We must compare our value with
           # the other Hash's value and not the other way around.
@@ -155,6 +155,14 @@ module JRuby::ScalaSupport
       alias_method :==, :eql?
 
       alias_method :length, :size
+
+      private
+      def real_map
+        case @raw
+        when scala.collection.Map::WithDefault then @raw.send(:underlying)
+        else @raw
+        end
+      end
     end
 
     class Immutable
