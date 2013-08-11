@@ -1,6 +1,4 @@
 fails:Hash#== computes equality for recursive hashes
-fails:Hash#== compares keys with eql? semantics
-fails:Hash#== does not call to_hash on hash subclasses
-fails:Hash#== ignores hash class differences
 fails:Hash#== compares keys with matching hash codes via eql?
+fails:Hash#== returns true if other Hash has the same number of keys and each key-value pair matches, even though the default-value are not same
 fails:Hash#== compares values with == semantics
