@@ -1,0 +1,1 @@
+fails:Hash#to_s handles hashes with recursive values

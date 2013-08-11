@@ -69,11 +69,30 @@ module JRuby::ScalaSupport
       end
 
       def keys
-        @raw.keys.toSeq.from_scala
+        @raw.keys.toSeq.from_scala.to_a
       end
+
+      def values
+        @raw.values.toSeq.from_scala.to_a
+      end
+
+      def value?(v)
+        values.include?(v)
+      end
+
+      alias_method :has_value?, :value?
 
       def has_key?(key)
         @raw.contains(key)
+      end
+
+      alias_method :key?, :has_key?
+      alias_method :member?, :has_key?
+      alias_method :include?, :has_key?
+
+      def key(val)
+        kv = find {|_,v| v == val }
+        kv && kv.first
       end
 
       def each
@@ -93,17 +112,55 @@ module JRuby::ScalaSupport
         end
       end
 
+      alias_method :each_pair, :each
+
       def to_s
         first = true
         each_with_object("{") do |(key, value), str|
           first ? first = false : str << ", "
-          str << "#{key}=>#{value}"
+          str << "#{key.inspect}=>#{value.inspect}"
         end << "}"
       end
+
+      alias_method :inspect, :to_s
 
       def as_json(options=nil)
         each_with_object({}) do |(key, value), hash|
           hash[key.as_json(options)] = value.as_json(options)
+        end
+      end
+
+      def eql?(other)
+        return true if self.equal? other
+
+        unless other.kind_of? Hash
+          return false unless other.respond_to? :to_hash
+          return other.eql?(self)
+        end
+
+        return false unless other.size == size
+
+        other.each do |k,v|
+
+          return false unless (entry = real_map.send(:findEntry,k)) && (entry.key.from_scala.eql?(k)) && (item = entry.value)
+
+          # Order of the comparison matters! We must compare our value with
+          # the other Hash's value and not the other way around.
+          return false unless item.eql?(v)
+        end
+
+        true
+      end
+
+      alias_method :==, :eql?
+
+      alias_method :length, :size
+
+      private
+      def real_map
+        case @raw
+        when scala.collection.Map::WithDefault then @raw.send(:underlying)
+        else @raw
         end
       end
     end
@@ -121,6 +178,49 @@ module JRuby::ScalaSupport
     class Mutable
       include Common
       JRuby::ScalaSupport::Common.fake_identity self, Hash
+
+      class << self
+        alias_method :previous_new, :new
+
+        def [](*args)
+          hash = new
+          if args.size == 1
+            obj = args.first
+            case obj
+            when Array, Hash then obj.each {|k,v| hash[k] = v}
+            else
+              raise "Don't yet know what to do with a #{obj.inspect}"
+            end
+            return hash
+          end
+
+          return new if args.empty?
+
+          if args.size & 1 == 1
+            raise ArgumentError, "Expected an even number, got #{args.length}"
+          end
+
+          i = 0
+          total = args.size
+
+          while i < total
+            hash[args[i]] = args[i+1]
+            i += 2
+          end
+
+          hash
+        end
+
+        def new(default_value=nil, &default_block)
+          raise ArgumentError, "You can only provide either a default value or a block" if default_value && default_block
+          h = scala.collection.mutable.HashMap.new
+          if default_block
+            h = h.with_default {|k| default_block.call(h,k) }
+          end
+          h = h.with_default_value(default_value) if default_value
+          previous_new(h)
+        end
+      end
 
       def []=(key, value)
         @raw.update(key, value.to_scala)
@@ -365,6 +465,8 @@ class Object
       JRuby::ScalaSupport::Set::Mutable.new(self)
     when Java::scala.collection.Set, Java::scala.collection.immutable.Set,
       JRuby::ScalaSupport::Set::Immutable.new(self)
+    when Java::scala.Symbol
+      self.name.to_sym
     else
       self
     end

@@ -1,0 +1,2 @@
+fails:Hash#include? returns true if argument is a key
+fails:Hash#include? compares keys with the same #hash value via #eql?
