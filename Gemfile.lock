@@ -8,6 +8,7 @@ GEM
   specs:
     coderay (1.0.9)
     diff-lcs (1.2.4)
+    ffi (1.9.0)
     ffi (1.9.0-java)
     formatador (0.2.4)
     guard (1.8.2)
@@ -26,12 +27,19 @@ GEM
       guard
       guard-rspec
       rspec
+    guard-shell (0.5.1)
+      guard (>= 1.1.0)
     listen (1.2.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
       rb-kqueue (>= 0.2)
     lumberjack (1.0.4)
     method_source (0.8.2)
+    mspec (1.5.20)
+    pry (0.9.12.2)
+      coderay (~> 1.0.5)
+      method_source (~> 0.8)
+      slop (~> 3.4)
     pry (0.9.12.2-java)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
@@ -57,10 +65,13 @@ GEM
 
 PLATFORMS
   java
+  ruby
 
 DEPENDENCIES
   guard
   guard-bundler
   guard-rspec-jruby
+  guard-shell
   jruby-scala-collections!
+  mspec
   rspec
