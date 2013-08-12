@@ -1,0 +1,2 @@
+fails:Hash.try_convert returns the argument if it's a kind of Hash
+fails:Hash.try_convert sends #to_hash to the argument and returns the result if it's a kind of Hash

@@ -14,8 +14,7 @@ With bundler:
 ```gem "jruby-scala-collections", ">=0.1.1", require: "jruby/scala_support"```
 
 Beware that you have to have ```scala-library.jar``` loaded before you 
-load ```jruby/scala_support```. In Rails this generally means it loading in
-```config/boot.rb```.
+load ```jruby/scala_support```. In Rails this generally means it loading in ```config/boot.rb```.
 
 ## How do you use it?
 
@@ -64,5 +63,17 @@ methods:
 ## Disclaimer
 
 This library was written by Artūras 'arturaz' Šlajus for personal
-usage. ```#to_scala``` should work pretty well, however Ruby wrappers 
+usage.
+
+## Contributing
+```#to_scala``` should work pretty well, however Ruby wrappers
 in ```#from_scala``` may be missing methods. Patches are welcome.
+jruby-scala-collections uses rubyspec and mspec to test that the behaviour
+of the Ruby wrappers is correct.
+Currently only a part of those tests pass. You can contribute by grabbing
+any of the tests marked as `fails` in `rubyspec/tags/**/*_tags.txt`, marking it as
+`focus` and implement the needed behaviour.
+Guard is configured so that `bundle exec guard` runs all tests that have the focus tag.
+If you want to run all tests that should be working, use `bundle exec mspec -G fails rubyspec`.
+If you have implemented functionality, run `bundle exec mspec tag rubyspec` to update the list
+of failing tests and check with a `git diff` that you haven't broken other functionality.

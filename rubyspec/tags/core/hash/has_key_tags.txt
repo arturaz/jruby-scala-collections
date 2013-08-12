@@ -1,0 +1,2 @@
+fails:Hash#has_key? returns true if argument is a key
+fails:Hash#has_key? compares keys with the same #hash value via #eql?

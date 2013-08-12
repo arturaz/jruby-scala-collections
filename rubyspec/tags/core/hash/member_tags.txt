@@ -1,0 +1,2 @@
+fails:Hash#member? returns true if argument is a key
+fails:Hash#member? compares keys with the same #hash value via #eql?
